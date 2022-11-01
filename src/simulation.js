@@ -51,7 +51,12 @@ export default function(nodes) {
 
       forces.forEach(function(force) {
         var f = { ...force };
-        if (iterations < 0) f.strength *= -1;
+        if (iterations < 0) {
+          if (typeof force.strength === "function")
+            f.strength = function() { return force.strength.apply(null, arguments) * -1; };
+          else
+            f.strength *= -1;
+        };
         f(alpha);
       });
 
