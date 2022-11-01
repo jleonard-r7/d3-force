@@ -37,6 +37,7 @@ export default function(nodes) {
   }
 
   function tick(iterations) {
+    console.log("iterations: ", iterations);
     var i, n = nodes.length, node;
     if (iterations === undefined) iterations = 1;
 
