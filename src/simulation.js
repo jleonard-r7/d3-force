@@ -50,7 +50,9 @@ export default function(nodes) {
       alpha = translation(alpha, (alphaTarget - alpha) * alphaDecayRate);
 
       forces.forEach(function(force) {
-        force(alpha);
+        var f = { ...force };
+        if (iterations < 0) f.strength *= -1;
+        f(alpha);
       });
 
       for (i = 0; i < n; ++i) {
