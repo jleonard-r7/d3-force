@@ -38,11 +38,16 @@ export default function(nodes) {
 
   function tick(iterations) {
     var i, n = nodes.length, node;
-
     if (iterations === undefined) iterations = 1;
 
-    for (var k = 0; k < iterations; ++k) {
-      alpha += (alphaTarget - alpha) * alphaDecay;
+    var plus = function (a,b) {return a+b;};
+    var minus = function (a,b) {return a-b;};
+    var translation = iterations > 0 ? plus : minus;
+    var alphaDecayRate = iterations > 0 ? alphaDecay : (1.0 / alphaDecay);
+    var velocityDecayRate = iterations > 0 ? velocityDecay : (1.0 / velocityDecay);
+
+    for (var k = 0; k < Math.abs(iterations); ++k) {
+      alpha = translation(alpha, (alphaTarget - alpha) * alphaDecayRate);
 
       forces.forEach(function(force) {
         force(alpha);
@@ -50,9 +55,9 @@ export default function(nodes) {
 
       for (i = 0; i < n; ++i) {
         node = nodes[i];
-        if (node.fx == null) node.x += node.vx *= velocityDecay;
+        if (node.fx == null) node.x = translation(node.x, (node.vx *= velocityDecayRate));
         else node.x = node.fx, node.vx = 0;
-        if (node.fy == null) node.y += node.vy *= velocityDecay;
+        if (node.fy == null) node.y = translation(node.y, (node.vy *= velocityDecayRate));
         else node.y = node.fy, node.vy = 0;
       }
     }
